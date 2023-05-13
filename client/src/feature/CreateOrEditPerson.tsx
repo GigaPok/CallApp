@@ -31,19 +31,20 @@ const tailFormItemLayout = {
 interface Props {
   person?: DataType;
   action?: "edit" | "create";
+  onFinish: () => void;
 }
 
-const CreateOrEditPerson = ({ person, action }: Props) => {
+const CreateOrEditPerson = ({ person, action, onFinish }: Props) => {
   const [form] = Form.useForm();
 
   const isEdit = action === "edit" && !!person;
   const { AddItem, update } = useStore();
 
-  const onFinish = (values: DataType) => {
+  const onSubmit = (values: DataType) => {
     if (isEdit) {
-      update(Action.EditList, values, person.id);
+      update(Action.EditList, values, person.id, onFinish);
     } else {
-      AddItem(Action.AddItem, values);
+      AddItem(Action.AddItem, values, onFinish);
     }
   };
 
@@ -52,7 +53,7 @@ const CreateOrEditPerson = ({ person, action }: Props) => {
       {...formItemLayout}
       form={form}
       name="register"
-      onFinish={onFinish}
+      onFinish={onSubmit}
       style={{ maxWidth: 600 }}
       scrollToFirstError
       initialValues={isEdit ? person : undefined}

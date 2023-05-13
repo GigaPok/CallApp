@@ -15,19 +15,21 @@ export type Store = {
   data: DataType[];
   loading: boolean;
   hasErrors: boolean;
+  isModalOpen: boolean;
   startRequest: () => void;
   endRequest: () => void;
   request: (request: Promise<any>) => void;
   fetch: (action: Action) => void;
-  update: (action: Action, body: any, id: number) => void;
+  update: (action: Action, body: any, id: number, onFinish: () => void) => void;
   deleteItem: (action: Action, id: any) => void;
-  AddItem: (action: Action, body: any) => void;
+  AddItem: (action: Action, body: any, onFinish: () => void) => void;
 };
 
 export const useStore = create<Store>()((set, get) => ({
   data: [],
   loading: false,
   hasErrors: false,
+  isModalOpen: false,
   startRequest: () => set(() => ({ loading: true })),
   endRequest: () => set(() => ({ loading: false })),
   request: (request) => {
@@ -50,14 +52,18 @@ export const useStore = create<Store>()((set, get) => ({
 
     request(response);
   },
-  update: (action, body, id) => {
+  update: (action, body, id, onFinish) => {
     const { request, data } = get();
 
     const response = axios
       .put(baseUrl + action.replace(":id", id.toString()), body)
-      .then((res) => ({
-        data: data.map((item) => (item.id === id ? res.data.result : item)),
-      }));
+      .then((res) => {
+        onFinish();
+
+        return {
+          data: data.map((item) => (item.id === id ? res.data.result : item)),
+        };
+      });
 
     request(response);
   },
@@ -72,10 +78,12 @@ export const useStore = create<Store>()((set, get) => ({
 
     request(response);
   },
-  AddItem: (action, body) => {
+  AddItem: (action, body, onFinish) => {
     let { request, data } = get();
 
     const response = axios.post(baseUrl + action, body).then((res) => {
+      onFinish();
+
       data.push(res.data.result);
 
       return { data };

@@ -124,7 +124,7 @@ const Home = () => {
         onCancel={handleCancel}
         footer={null}
       >
-        <CreateOrEditPerson action={"create"} />
+        <CreateOrEditPerson action={"create"} onFinish={handleCancel} />
       </Modal>
       <Modal
         title="Edit Post"
@@ -132,7 +132,13 @@ const Home = () => {
         onCancel={handleCancel}
         footer={null}
       >
-        {!!editItem && <CreateOrEditPerson action={"edit"} person={editItem} />}
+        {!!editItem && (
+          <CreateOrEditPerson
+            action={"edit"}
+            person={editItem}
+            onFinish={handleCancel}
+          />
+        )}
       </Modal>
     </div>
   );

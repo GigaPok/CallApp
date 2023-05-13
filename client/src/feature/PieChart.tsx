@@ -1,4 +1,4 @@
-import { Pie } from "@ant-design/charts";
+import { Pie, PieConfig } from "@ant-design/charts";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Action, useStore } from "../store/Store";
@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 interface PieChartData {
   type: string;
   value: number;
-  percentage?: number;
+  percentage: number;
 }
 
 const PieChart = () => {
@@ -42,7 +42,7 @@ const PieChart = () => {
     setPieData(newData);
   }, [data]);
 
-  const config = {
+  const config: PieConfig = {
     appendPadding: 10,
     data: pieData,
     angleField: "value",
@@ -52,8 +52,8 @@ const PieChart = () => {
     label: {
       type: "inner",
       offset: "-50%",
-      content: ({ percentage }: PieChartData) => {
-        return percentage ? `${percentage.toFixed(1)}%` : "";
+      content: ({ percentage }) => {
+        return percentage ? `${percentage.toFixed(1)}%` : "sas";
       },
       style: {
         textAlign: "center",
@@ -77,7 +77,7 @@ const PieChart = () => {
   };
   return (
     <Wrapper>
-      <Pie {...(config as any)} />
+      <Pie {...config} />
     </Wrapper>
   );
 };
